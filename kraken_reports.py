@@ -21,7 +21,7 @@ def convert_utc_to_local_date(date_str):
 
 def is_taxable_usd_row(row):
     """Sprawdza, czy wiersz dotyczy USD i ma znaczenie podatkowe."""
-    if row.get("symbol") != "usd":
+    if row.get("symbol", "").lower() != "usd":
         return False
     transaction_type = row.get("type", "").lower().strip()
     return transaction_type in TAXABLE_TYPES
