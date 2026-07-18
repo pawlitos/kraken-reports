@@ -22,8 +22,8 @@ Narzędzie do rozliczania podatkowego transakcji USD z eksportu Kraken Ledgers. 
 | [kraken_reports.py](kraken_reports.py) | Główny skrypt — wczytuje CSV, filtruje i przelicza transakcje, wypisuje podsumowanie. |
 | [nbp.py](nbp.py) | `NbpRateFetcher` — pobiera i cache'uje kursy USD/PLN z publicznego API NBP. |
 | [unique.py](unique.py) | Pomocniczy skrypt do podglądu unikalnych wartości kolumny `type` w pliku `kraken_ledgers.csv`. |
-| [test_unit.py](test_unit.py) | Testy jednostkowe logiki konwersji dat i filtrowania wierszy. |
-| [test_api.py](test_api.py) | Testy integracyjne odpytujące realne API NBP. |
+| [tests/unit/](tests/unit/) | Testy jednostkowe (bez sieci) — logika konwersji dat, filtrowanie wierszy itp. |
+| [tests/integration/](tests/integration/) | Testy integracyjne odpytujące realne API NBP. |
 
 ## Wymagania
 
@@ -59,13 +59,19 @@ WYNIK NETTO PLN:           4,937.78 PLN
 Testy jednostkowe (bez połączenia z siecią):
 
 ```bash
-python -m unittest test_unit.py -v
+python -m unittest discover -s tests/unit -v
 ```
 
 Testy integracyjne (wymagają połączenia z API NBP):
 
 ```bash
-python -m unittest test_api.py -v
+python -m unittest discover -s tests/integration -v
+```
+
+Wszystkie testy naraz:
+
+```bash
+python -m unittest discover -s tests -v
 ```
 
 ## Uwaga
