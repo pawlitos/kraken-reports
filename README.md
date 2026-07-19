@@ -21,7 +21,7 @@ Narzędzie do rozliczania podatkowego transakcji USD z eksportu Kraken Ledgers. 
 |---|---|
 | [kraken_reports.py](kraken_reports.py) | Główny skrypt — wczytuje CSV, filtruje i przelicza transakcje, wypisuje podsumowanie. |
 | [nbp.py](nbp.py) | `NbpRateFetcher` — pobiera i cache'uje kursy USD/PLN z publicznego API NBP. |
-| [unique.py](unique.py) | Pomocniczy skrypt do podglądu unikalnych wartości kolumny `type` w pliku `kraken_ledgers.csv`. |
+| [tools/unique.py](tools/unique.py) | Pomocniczy skrypt do podglądu unikalnych wartości kolumny `type` w podanym pliku CSV. |
 | [tests/unit/](tests/unit/) | Testy jednostkowe (bez sieci) — logika konwersji dat, filtrowanie wierszy itp. |
 | [tests/integration/](tests/integration/) | Testy integracyjne odpytujące realne API NBP. |
 
@@ -52,6 +52,12 @@ PODSUMOWANIE ROCZNE PLN (Do urzędu skarbowego):
 Suma przychodów (zyski):   4,987.65 PLN
 Suma kosztów (opłaty):     49.87 PLN
 WYNIK NETTO PLN:           4,937.78 PLN
+```
+
+Podgląd unikalnych typów transakcji w pliku CSV:
+
+```bash
+python tools/unique.py sciezka/do/kraken_ledgers.csv
 ```
 
 ## Testy
