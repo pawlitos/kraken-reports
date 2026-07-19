@@ -8,16 +8,13 @@ from tests.helpers import VerboseTestCase, vprint
 class TestNBPIntegration(VerboseTestCase):
 
     def setUp(self):
+        super().setUp()
         self.rate_fetcher = NbpRateFetcher()
 
     def test_01_real_nbp_api_raw_json(self):
-        """
-        Sprawdza bezpośrednio strukturę JSON zwracaną przez serwer NBP,
-        żeby upewnić się, że struktura kluczy 'rates', 'mid' itp. jest aktualna.
-        """
+        """Sprawdza strukturę JSON zwracaną przez API NBP (klucze 'rates', 'mid', 'effectiveDate')."""
         url = "http://api.nbp.pl/api/exchangerates/rates/a/usd/2026-07-14/?format=json"
 
-        vprint(f"\n[TEST INTEGRACYJNY] Uruchamiam: test_01_real_nbp_api_raw_json")
         vprint(f"  -> Adres URL: {url}")
 
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
@@ -30,7 +27,7 @@ class TestNBPIntegration(VerboseTestCase):
             raw_data = response.read().decode("utf-8")
             data = json.loads(raw_data)
 
-            vprint(f"  -> Otrzymany JSON z NBP: {json.dumps(data, indent=2)}")
+            vprint(f"  -> Otrzymany JSON z NBP:\n{json.dumps(data, indent=2)}")
 
             # Sprawdzamy obecność kluczowych pól, od których zależy Twój parser
             self.assertIn("rates", data, "Brak klucza 'rates' w odpowiedzi API NBP")
@@ -49,15 +46,10 @@ class TestNBPIntegration(VerboseTestCase):
             vprint(f"  -> [OK] Walidacja struktury JSON zakończona sukcesem")
 
     def test_02_real_nbp_api_response_structure(self):
-        """
-        Prawdziwy test integracyjny:
-        Wysyła rzeczywiste zapytanie do API NBP dla konkretnego dnia roboczego,
-        aby upewnić się, że format danych się nie zmienił.
-        """
+        """Sprawdza, czy pobrany kurs USD/PLN jest sensowną liczbą z przedziału 3.0-6.0."""
         # Wybieramy konkretny, znany dzień roboczy z przeszłości
         test_date = "2026-07-15"  # środa (kurs pobierany jest dla wtorku 2026-07-14)
 
-        vprint(f"\n[TEST INTEGRACYJNY] Uruchamiam: test_02_real_nbp_api_response_structure")
         vprint(f"  -> Wysyłam zapytanie o datę transakcji: '{test_date}'")
 
         try:
@@ -74,13 +66,7 @@ class TestNBPIntegration(VerboseTestCase):
             self.fail(f"Połączenie z API NBP nie powiodło się: {e}")
 
     def test_03_real_nbp_api_weekend_and_weekdays_fallback(self):
-        """
-        Prawdziwy test integracyjny dla dni granicznych i roboczych:
-        Sprawdza, czy funkcja get_nbp_rate poprawnie współpracuje z żywym API NBP,
-        obsługując zarówno pełny cykl weekendowy, jak i standardowe dni robocze.
-        """
-        vprint(f"\n[TEST INTEGRACYJNY] Uruchamiam: test_03_real_nbp_api_weekend_and_weekdays_fallback")
-
+        """Sprawdza cofanie się do poprzedniego dnia roboczego dla weekendów i dni granicznych."""
         # Scenariusze dla lipca 2026 roku:
         # Piątek (10.07)      -> API szuka czwartku (09.07) -> Działa (Roboczy)
         # Sobota (11.07)      -> API szuka piątku (10.07) -> Działa (Roboczy)
@@ -97,7 +83,7 @@ class TestNBPIntegration(VerboseTestCase):
         ]
 
         for test_date, description in scenarios:
-            vprint(f"\n  -> Testuję dzień: {description}")
+            vprint(f"  -> Testuję dzień: {description}")
             vprint(f"     Data przekazana do funkcji: '{test_date}'")
 
             try:
