@@ -62,7 +62,7 @@ def print_summary(total_income_usd, total_expenses_usd, total_income_pln, total_
 
 def main():
     parser = argparse.ArgumentParser(description="Generuje rozliczenie PLN na podstawie eksportu Kraken Ledgers.")
-    parser.add_argument("path", help="Ścieżka do pliku CSV z eksportem Kraken Ledgers")
+    parser.add_argument("path", metavar="PATH", help="Ścieżka do pliku CSV z eksportem Kraken Ledgers")
     args = parser.parse_args()
 
     rate_fetcher = NbpRateFetcher()
