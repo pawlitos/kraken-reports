@@ -1,6 +1,7 @@
 import urllib.request
 import urllib.error
 import json
+import time
 from datetime import datetime, timedelta
 
 
@@ -24,7 +25,9 @@ class NbpRateFetcher:
 
             url = f"http://api.nbp.pl/api/exchangerates/rates/a/usd/{formatted_date}/?format=json"
             try:
-                with urllib.request.urlopen(url) as response:
+                time.sleep(0.5)
+                req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, timeout=30) as response:
                     data = json.loads(response.read().decode())
                     rate = data["rates"][0]["mid"]
                     self._cache[formatted_date] = rate
