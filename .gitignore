@@ -5,3 +5,5 @@ __pycache__/
 
 # Eksporty Kraken (dane finansowe)
 *.csv
+# ...z wyjątkiem przykładowych plików do testów
+!tests/**/*.csv
