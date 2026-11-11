@@ -1,6 +1,7 @@
 import unittest
+
 from kraken_reports import convert_utc_to_local_date
-from tests.helpers import VerboseTestCase, vprint
+from tests.helpers import CYAN, VerboseTestCase, vprint
 
 
 class TestDateTimeConversion(VerboseTestCase):
@@ -22,10 +23,10 @@ class TestDateTimeConversion(VerboseTestCase):
         for utc_in, expected_out, desc in cases:
             with self.subTest(utc_in=utc_in):
                 output = convert_utc_to_local_date(utc_in)
-                vprint(f"  -> {desc}")
-                vprint(f"     UTC: {utc_in}")
-                vprint(f"     Wynik: {output}")
-                vprint(f"     Oczekiwano: {expected_out}")
+                vprint(f"-> {desc}", CYAN)
+                vprint(f"   UTC: {utc_in}", CYAN)
+                vprint(f"   Wynik: {output}", CYAN)
+                vprint(f"   Oczekiwano: {expected_out}", CYAN)
                 self.assertEqual(output, expected_out)
 
 
