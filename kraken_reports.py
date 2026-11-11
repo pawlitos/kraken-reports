@@ -3,7 +3,7 @@ import csv
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from nbp import NbpRateFetcher
+from nbp import FETCHERS, create_rate_fetcher
 
 TAXABLE_TYPES = {"conversion", "funding rate change", "futures trade"}
 
@@ -63,9 +63,16 @@ def print_summary(total_income_usd, total_expenses_usd, total_income_pln, total_
 def main():
     parser = argparse.ArgumentParser(description="Generuje rozliczenie PLN na podstawie eksportu Kraken Ledgers.")
     parser.add_argument("path", metavar="PATH", help="Ścieżka do pliku CSV z eksportem Kraken Ledgers")
+    parser.add_argument(
+        "--fetcher",
+        choices=sorted(FETCHERS),
+        default="daily",
+        help="Sposób pobierania kursów NBP: 'daily' — jedno zapytanie na dzień, "
+        "'bulk' — hurtowo, zakresami po 93 dni (domyślnie: daily)",
+    )
     args = parser.parse_args()
 
-    rate_fetcher = NbpRateFetcher()
+    rate_fetcher = create_rate_fetcher(args.fetcher)
 
     total_income_pln = 0.0
     total_expenses_pln = 0.0
