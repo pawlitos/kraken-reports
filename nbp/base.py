@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 
 API_URL = "http://api.nbp.pl/api/exchangerates/rates/a/usd"
+MAX_LOOKBACK_DAYS = 31  # tyle dni wstecz szukamy tabeli, zanim zgłosimy błąd
 
 
 class NbpRateFetcher(ABC):
@@ -24,8 +25,9 @@ class NbpRateFetcher(ABC):
 
     def get_rate(self, date_str):
         current_date = datetime.strptime(date_str, "%Y-%m-%d") - timedelta(days=1)
+        oldest_date = current_date - timedelta(days=MAX_LOOKBACK_DAYS - 1)
 
-        while True:
+        while current_date >= oldest_date:
             formatted_date = current_date.strftime("%Y-%m-%d")
             if formatted_date in self._cache:
                 return self._cache[formatted_date]
@@ -35,6 +37,8 @@ class NbpRateFetcher(ABC):
                 current_date -= timedelta(days=1)
             else:
                 self._fetch(current_date)
+
+        raise RuntimeError(f"Brak tabeli kursów NBP w ciągu {MAX_LOOKBACK_DAYS} dni przed {date_str}")
 
     @abstractmethod
     def _fetch(self, date):
