@@ -85,13 +85,14 @@ class FetcherIntegrationTests:
 
     def test_03_real_nbp_api_weekend_and_weekdays_fallback(self):
         """Sprawdza cofanie się do poprzedniego dnia roboczego dla weekendów i dni granicznych."""
-        # Scenariusze dla lipca 2026 roku:
-        # Piątek (10.07)      -> API szuka czwartku (09.07) -> Działa (Roboczy)
-        # Sobota (11.07)      -> API szuka piątku (10.07) -> Działa (Roboczy)
-        # Niedziela (12.07)    -> API szuka soboty (404) -> cofa do piątku (10.07) -> Działa
-        # Poniedziałek (13.07) -> API szuka niedzieli (404) -> soboty (404) -> piątku (10.07) -> Działa
-        # Wtorek (14.07)       -> API szuka poniedziałku (13.07) -> Działa (Roboczy)
-        # Środa (15.07)        -> API szuka wtorku (14.07) -> Działa (Roboczy)
+        # Scenariusze dla lipca 2026 roku (dni sprawdzane po kolei, aż do znalezienia tabeli):
+        # Piątek (10.07)       -> czwartek (09.07)
+        # Sobota (11.07)       -> piątek (10.07)
+        # Niedziela (12.07)    -> sobota (brak tabeli) -> piątek (10.07)
+        # Poniedziałek (13.07) -> niedziela, sobota (brak tabeli) -> piątek (10.07)
+        # Wtorek (14.07)       -> poniedziałek (13.07)
+        # Środa (15.07)        -> wtorek (14.07)
+        # Fetcher dzienny pyta o te dni API (404 = brak tabeli), hurtowy szuka ich w danych z prefetch().
 
         scenarios = [
             ("2026-07-10", "Piątek (Szukamy kursu z czwartku 09.07)"),
