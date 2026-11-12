@@ -20,7 +20,12 @@ Narzędzie do rozliczania podatkowego transakcji USD z eksportu Kraken Ledgers. 
 | Plik | Opis |
 |---|---|
 | [kraken_reports.py](kraken_reports.py) | Główny skrypt — wczytuje CSV, filtruje i przelicza transakcje, wypisuje podsumowanie. |
-| [nbp.py](nbp.py) | `NbpRateFetcher` — pobiera i cache'uje kursy USD/PLN z publicznego API NBP. |
+| [nbp/](nbp/) | Pakiet pobierający kursy USD/PLN z publicznego API NBP: |
+| [nbp/base.py](nbp/base.py) | `NbpRateFetcher` — abstrakcyjna klasa bazowa: kontrakt (`prefetch`, `get_rate`), który spełniają oba fetchery. |
+| [nbp/api.py](nbp/api.py) | Wspólne funkcje do odpytywania API NBP (zapytanie, obsługa błędów, dzisiejsza data w Polsce). |
+| [nbp/daily.py](nbp/daily.py) | `DailyNbpRateFetcher` — jedno zapytanie do API na dzień, na żądanie. |
+| [nbp/bulk.py](nbp/bulk.py) | `BulkNbpRateFetcher` — przed obliczeniami pobiera kursy dla całego zakresu dat, zapytaniami po 93 dni. |
+| [nbp/factory.py](nbp/factory.py) | `create_rate_fetcher` — zwraca fetcher dla trybu wybranego flagą `--fetcher`. |
 | [tools/unique.py](tools/unique.py) | Pomocniczy skrypt do podglądu unikalnych wartości kolumny `type` w podanym pliku CSV. |
 | [tests/unit/](tests/unit/) | Testy jednostkowe (bez sieci) — logika konwersji dat, filtrowanie wierszy itp. |
 | [tests/integration/](tests/integration/) | Testy integracyjne odpytujące realne API NBP. |
@@ -34,6 +39,15 @@ Narzędzie do rozliczania podatkowego transakcji USD z eksportu Kraken Ledgers. 
 
 ```bash
 python kraken_reports.py sciezka/do/kraken_ledgers.csv
+```
+
+Sposób pobierania kursów NBP wybiera się flagą `--fetcher`:
+
+- `daily` (domyślnie) — osobne zapytanie do API dla każdego dnia,
+- `bulk` — kursy dla całego zakresu dat pobierane z góry, zakresami po 93 dni (znacznie mniej zapytań, niezależnie od kolejności wierszy w pliku).
+
+```bash
+python kraken_reports.py sciezka/do/kraken_ledgers.csv --fetcher bulk
 ```
 
 Przykładowy wynik:

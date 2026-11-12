@@ -1,6 +1,7 @@
 import unittest
+
 from kraken_reports import is_taxable_usd_row
-from tests.helpers import VerboseTestCase, vprint
+from tests.helpers import CYAN, VerboseTestCase, vprint
 
 
 class TestTaxableRowFiltering(VerboseTestCase):
@@ -19,10 +20,10 @@ class TestTaxableRowFiltering(VerboseTestCase):
         for row, desc in cases:
             with self.subTest(row=row):
                 result = is_taxable_usd_row(row)
-                vprint(f"  -> {desc}")
-                vprint(f"     Wiersz: {row}")
-                vprint(f"     Wynik: {result}")
-                vprint(f"     Oczekiwano: False")
+                vprint(f"-> {desc}", CYAN)
+                vprint(f"   Wiersz: {row}", CYAN)
+                vprint(f"   Wynik: {result}", CYAN)
+                vprint("   Oczekiwano: False", CYAN)
                 self.assertFalse(result, desc)
 
     def test_02_is_taxable_usd_row_returns_true(self):
@@ -39,10 +40,10 @@ class TestTaxableRowFiltering(VerboseTestCase):
         for row, desc in cases:
             with self.subTest(row=row):
                 result = is_taxable_usd_row(row)
-                vprint(f"  -> {desc}")
-                vprint(f"     Wiersz: {row}")
-                vprint(f"     Wynik: {result}")
-                vprint(f"     Oczekiwano: True")
+                vprint(f"-> {desc}", CYAN)
+                vprint(f"   Wiersz: {row}", CYAN)
+                vprint(f"   Wynik: {result}", CYAN)
+                vprint("   Oczekiwano: True", CYAN)
                 self.assertTrue(result, desc)
 
 
