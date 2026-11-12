@@ -1,5 +1,6 @@
 import argparse
 import csv
+import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -71,6 +72,9 @@ def main():
         "'bulk' — hurtowo, zakresami po 93 dni (domyślnie: daily)",
     )
     args = parser.parse_args()
+
+    # Komunikaty o pobieraniu kursów na stderr, żeby przekierowanie raportu (> wynik.txt) zawierało tylko podsumowanie
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     rate_fetcher = create_rate_fetcher(args.fetcher)
 

@@ -1,8 +1,13 @@
+import logging
 import os
 import sys
 import unittest
 
 VERBOSE = "-v" in sys.argv or "--verbose" in sys.argv
+
+# Komunikaty o zapytaniach do API NBP (nbp/api.py) tylko w trybie -v
+if VERBOSE:
+    logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stdout)
 
 # Kolory ANSI do przekazania jako drugi argument vprint().
 # Wyłączone przy przekierowaniu do pliku, gdy ustawiono zmienną NO_COLOR

@@ -1,6 +1,7 @@
 """Wspólne funkcje do odpytywania API NBP, używane przez oba fetchery."""
 
 import json
+import logging
 import time
 import urllib.error
 import urllib.request
@@ -9,6 +10,9 @@ from zoneinfo import ZoneInfo
 
 API_URL = "http://api.nbp.pl/api/exchangerates/rates/a/usd"
 MAX_LOOKBACK_DAYS = 31  # tyle dni wstecz szukamy tabeli, zanim zgłosimy błąd
+
+# O tym, czy komunikaty są widoczne, decyduje wywołujący (kraken_reports.py, testy)
+logger = logging.getLogger(__name__)
 
 
 def today_in_warsaw():
@@ -23,6 +27,7 @@ def request_rates(url, label):
     """
     try:
         time.sleep(0.5)
+        logger.info("Pobieram dane z %s", url)
         with urllib.request.urlopen(url, timeout=30) as response:
             data = json.loads(response.read().decode())
             rates = [(entry["effectiveDate"], entry["mid"]) for entry in data["rates"]]
