@@ -14,9 +14,7 @@ class TestApiRawJson(VerboseTestCase):
 
         vprint(f"-> Adres URL: {url}", CYAN)
 
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-
-        with urllib.request.urlopen(req) as response:
+        with urllib.request.urlopen(url, timeout=30) as response:
             vprint(f"-> Kod odpowiedzi serwera: {response.status}", CYAN)
             self.assertEqual(response.status, 200)
 
@@ -49,9 +47,7 @@ class TestApiRawJson(VerboseTestCase):
 
         vprint(f"-> Adres URL: {url}", CYAN)
 
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-
-        with urllib.request.urlopen(req) as response:
+        with urllib.request.urlopen(url, timeout=30) as response:
             vprint(f"-> Kod odpowiedzi serwera: {response.status}", CYAN)
             self.assertEqual(response.status, 200)
 
@@ -106,6 +102,9 @@ class FetcherIntegrationTests:
             ("2026-07-15", "Środa (Szukamy kursu z wtorku 14.07)"),
         ]
 
+        # Tak jak kraken_reports.py: najpierw prefetch dla całego zakresu dat (fetcher dzienny go ignoruje)
+        self.rate_fetcher.prefetch(scenarios[0][0], scenarios[-1][0])
+
         for test_date, description in scenarios:
             vprint(f"-> Testuję dzień: {description}", CYAN)
             vprint(f"   Data przekazana do funkcji: '{test_date}'", CYAN)
@@ -144,6 +143,7 @@ class FetcherIntegrationTests:
         for test_date, rate_day, expected_rate in scenarios:
             with self.subTest(date=test_date):
                 fetcher = create_rate_fetcher(self.FETCHER_MODE)
+                fetcher.prefetch(test_date, test_date)
                 vprint(f"-> Transakcja: '{test_date}', oczekiwany kurs z {rate_day}: {expected_rate} PLN/USD", CYAN)
 
                 try:
@@ -174,6 +174,7 @@ class TestBulkFetcherIntegration(FetcherIntegrationTests, VerboseTestCase):
     def test_06_matches_daily_fetcher(self):
         """Fetcher hurtowy musi zwracać te same kursy co dzienny."""
         daily = create_rate_fetcher("daily")
+        self.rate_fetcher.prefetch("2026-07-10", "2026-07-15")
         for test_date in ["2026-07-10", "2026-07-13", "2026-07-15"]:
             self.assertEqual(self.rate_fetcher.get_rate(test_date), daily.get_rate(test_date), test_date)
 

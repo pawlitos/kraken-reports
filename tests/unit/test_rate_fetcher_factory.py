@@ -15,13 +15,18 @@ class TestRateFetcherFactory(VerboseTestCase):
     def test_each_call_returns_fresh_instance(self):
         self.assertIsNot(create_rate_fetcher("bulk"), create_rate_fetcher("bulk"))
 
-    def test_unknown_mode_raises_value_error(self):
-        with self.assertRaises(ValueError):
+    def test_unknown_mode_raises_key_error(self):
+        with self.assertRaises(KeyError):
             create_rate_fetcher("weekly")
 
     def test_base_class_is_abstract(self):
         with self.assertRaises(TypeError):
             NbpRateFetcher()
+
+    def test_fetchers_implement_base_class(self):
+        for fetcher_class in (DailyNbpRateFetcher, BulkNbpRateFetcher):
+            with self.subTest(fetcher=fetcher_class.__name__):
+                self.assertTrue(issubclass(fetcher_class, NbpRateFetcher))
 
 
 if __name__ == "__main__":

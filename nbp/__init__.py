@@ -6,9 +6,9 @@ from .daily import DailyNbpRateFetcher
 from .factory import FETCHERS, create_rate_fetcher
 
 __all__ = [
-    "NbpRateFetcher",
-    "DailyNbpRateFetcher",
-    "BulkNbpRateFetcher",
     "FETCHERS",
+    "BulkNbpRateFetcher",
+    "DailyNbpRateFetcher",
+    "NbpRateFetcher",
     "create_rate_fetcher",
 ]

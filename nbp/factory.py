@@ -9,7 +9,4 @@ FETCHERS = {
 
 def create_rate_fetcher(mode):
     """Zwraca fetcher kursów NBP dla podanego trybu ('daily' lub 'bulk')."""
-    try:
-        return FETCHERS[mode]()
-    except KeyError:
-        raise ValueError(f"Nieznany tryb pobierania kursów: {mode!r} (dostępne: {', '.join(FETCHERS)})") from None
+    return FETCHERS[mode]()

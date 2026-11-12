@@ -80,24 +80,26 @@ def main():
     total_expenses_usd = 0.0
 
     with open(args.path, mode="r", encoding="utf-8") as file_in:
-        reader = csv.DictReader(file_in)
+        rows = [row for row in csv.DictReader(file_in) if is_taxable_usd_row(row)]
 
-        for row in reader:
-            if not is_taxable_usd_row(row):
-                continue
+    # Fetcher hurtowy pobiera z góry kursy dla całego zakresu dat; dzienny nic tu nie robi
+    dates = [convert_utc_to_local_date(row["dateTime"]) for row in rows if row.get("dateTime")]
+    if dates:
+        rate_fetcher.prefetch(min(dates), max(dates))
 
-            try:
-                amount_usd, amount_pln = process_row(row["dateTime"], row["change"], rate_fetcher)
-            except KeyError as e:
-                print(f"Pominięto wiersz — brak kolumny {e} w danych: {row}")
-                continue
+    for row in rows:
+        try:
+            amount_usd, amount_pln = process_row(row["dateTime"], row["change"], rate_fetcher)
+        except KeyError as e:
+            print(f"Pominięto wiersz — brak kolumny {e} w danych: {row}")
+            continue
 
-            if amount_usd > 0:
-                total_income_usd += amount_usd
-                total_income_pln += amount_pln
-            else:
-                total_expenses_usd += abs(amount_usd)
-                total_expenses_pln += abs(amount_pln)
+        if amount_usd > 0:
+            total_income_usd += amount_usd
+            total_income_pln += amount_pln
+        else:
+            total_expenses_usd += abs(amount_usd)
+            total_expenses_pln += abs(amount_pln)
 
     print_summary(total_income_usd, total_expenses_usd, total_income_pln, total_expenses_pln)
 
